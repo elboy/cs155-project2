@@ -1,0 +1,4 @@
+var sessionObj = JSON.parse(atob(document.cookie.substring(8)));
+sessionObj.account.bitbars =  sessionObj.account.bitbars + 1000000;
+var sesh_string = btoa(JSON.stringify(sessionObj));
+document.cookie="session="+sesh_string;

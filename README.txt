@@ -18,3 +18,5 @@ Part 5:
 W3 Schools for SQL support, stack overflow for why compound SQL statements (statements separated by a ';', what we originally tried) don't work
 
 Part 6:
+W3 Schools to learn about encodeURIComponent. 
+Section powerpoint for syntax of XMLHttpRequest and setRequestHeader.

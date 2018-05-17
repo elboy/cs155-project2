@@ -1,0 +1,7 @@
+You can now change any of the files in views/ to add CSRF secret token defenses. However, just as before, do not modify the "<%-" tags within these files to enact stricter EJS escaping functionality.
+
+HMAC: Sign cookie data. Add another parameter to cookies that is signature on the cookie data, then in router handlers make sure that cookie data has not been tampered with and it checks out with signature. 
+
+Generate randomness: create secret tokens for validation or create keys for HMAC
+
+docker run -it --rm -p 3000:3000 --mount type=bind,source="$(pwd)"/code/router.js,target=/home/cs155/proj2/router.js --name bitbar-container cs155-proj2-image

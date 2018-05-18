@@ -6,6 +6,7 @@ import { generateRandomness, HMAC, KDF, checkPassword } from './utils/crypto';
 
 const router = express.Router();
 const dbPromise = sqlite.open('./db/database.sqlite', { cached: true });
+const key =  generateRandomness();
 
 function render(req, res, next, page, title, errorMsg = false, result = null) {
   res.render(
@@ -20,6 +21,11 @@ function render(req, res, next, page, title, errorMsg = false, result = null) {
   );
 }
 
+function getkeyFromSession(session) {
+	  var dat_string = JSON.stringify(session.account) + JSON.stringify(session.loggedIn);
+	  return HMAC(key, dat_string);
+}
+
 
 router.get('/', (req, res, next) => {
   render(req, res, next, 'index', 'Bitbar Home');
@@ -27,9 +33,12 @@ router.get('/', (req, res, next) => {
 
 
 router.post('/set_profile', asyncMiddleware(async (req, res, next) => {
-  if(req.body.new_profile.includes("<script>")){
+  if(req.body.new_profile.includes("<script>")){ // Noa: I don't think this is strong enough
     render(req, res, next, 'index', 'Bitbar Home', 'Invalid profile');
     return;
+  }
+  if(req.session.MAC !== getkeyFromSession(req.session)){
+	  return;
   }
 
   req.session.account.profile = req.body.new_profile;
@@ -63,8 +72,9 @@ router.post('/post_login', asyncMiddleware(async (req, res, next) => {
   const result = await db.get(query);
   if(result) { // if this username actually exists
     if(checkPassword(req.body.password, result)) { // if password is valid
-      req.session.loggedIn = true;
-      req.session.account = result;
+	  req.session.loggedIn = true;
+      req.session.account = result;	  
+	  req.session.MAC = getkeyFromSession(req.session);
       render(req, res, next, 'login/success', 'Bitbar Home');
       return;
     }
@@ -101,11 +111,16 @@ router.post('/post_register', asyncMiddleware(async (req, res, next) => {
     profile: '',
     bitbars: 100,
   };
+  req.session.MAC = getkeyFromSession(req.session);
   render(req, res, next,'register/success', 'Bitbar Home');
 }));
 
 
 router.get('/close', asyncMiddleware(async (req, res, next) => {
+  if(req.session.MAC !== getkeyFromSession(req.session)){
+    render(req, res, next, 'login/form', 'Login', 'Invalid session');
+    return;	  
+  }
   if(req.session.loggedIn == false) {
     render(req, res, next, 'login/form', 'Login', 'You must be logged in to use this feature!');
     return;
@@ -136,7 +151,12 @@ router.get('/logout', (req, res, next) => {
 
 
 router.get('/profile', asyncMiddleware(async (req, res, next) => {
-  if(req.session.loggedIn == false) {
+  if(req.session.MAC !== getkeyFromSession(req.session)) {
+    render(req, res, next, 'login/form', 'Login', 'Invalid session');
+    return;
+  };
+
+  if(req.session.loggedIn == false ) {
     render(req, res, next, 'login/form', 'Login', 'You must be logged in to use this feature!');
     return;
   };
@@ -173,7 +193,10 @@ router.get('/profile', asyncMiddleware(async (req, res, next) => {
 
 
 router.get('/transfer', (req, res, next) => {
-
+  if(req.session.MAC !== getkeyFromSession(req.session)){
+    render(req, res, next, 'login/form', 'Login', 'Invalid session');
+    return;	  
+  }
   if(req.session.loggedIn == false) {
     render(req, res, next, 'login/form', 'Login', 'You must be logged in to use this feature!');
     return;
@@ -190,6 +213,10 @@ router.get('/transfer', (req, res, next) => {
 
 
 router.post('/post_transfer', asyncMiddleware(async(req, res, next) => {
+  if(req.session.MAC !== getkeyFromSession(req.session)){
+    render(req, res, next, 'login/form', 'Login', 'Invalid session');
+    return;	  
+  }
   if(req.session.loggedIn == false) {
     render(req, res, next, 'login/form', 'Login', 'You must be logged in to use this feature!');
     return;

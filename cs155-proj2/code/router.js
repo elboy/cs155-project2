@@ -33,7 +33,7 @@ router.get('/', (req, res, next) => {
 
 
 router.post('/set_profile', asyncMiddleware(async (req, res, next) => {
-  if(req.body.new_profile.includes("<script>")){ // Noa: I don't think this is strong enough
+  if(req.body.new_profile.includes("script") | req.body.new_profile.includes("src")){
     render(req, res, next, 'index', 'Bitbar Home', 'Invalid profile');
     return;
   }

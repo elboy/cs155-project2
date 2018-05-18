@@ -1,7 +1,7 @@
 ---------------------------------------
 
 Exploit Alpha (Cookie Theft):
-When user doesn't exist, render 'profile/view' with error message that doesn't contain the nonexistent (and possibly malicious) username.
+When user doesn't exist, render 'profile/view' with error message that doesn't contain the nonexistent (and possibly malicious) username. On Piazza, Gaspar said this is a sufficient defense for this attack.
  
 Resources: 
   - None
@@ -41,9 +41,9 @@ Resources:
 ---------------------------------------
 
 Exploit Foxtrot (Profile Worm):
-
+Prevent malicious profiles from being created. If a user tries to create profile that contains <script>, deny the profile from being updated and leave a friendly error message. 
  
 Resources: 
-  - 
+  - None
 
 ---------------------------------------
